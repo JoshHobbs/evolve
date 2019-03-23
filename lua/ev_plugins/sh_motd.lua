@@ -15,7 +15,7 @@ function PLUGIN:Call(ply, args)
 end
 
 function PLUGIN:PlayerInitialSpawn(ply)
-	timer.Simple(1, function() ply:ConCommand("evolve_startmotd") end)
+	timer.Simple(1, function() ply:ConCommand("evolve_motd") end)
 end
 
 function PLUGIN:OpenMotd(ply)
@@ -30,41 +30,13 @@ if (SERVER) then
 	end
 
 	for k,v in pairs(player.GetAll()) do
-		v:ConCommand("evolve_startmotd")
+		v:ConCommand("evolve_motd")
 	end
 end
 
 
 if (CLIENT) then
 	function PLUGIN:CreateMenu()
-		self.StartPanel = vgui.Create("DFrame")
-		local w,h = 150,50
-		self.StartPanel:Center()
-		self.StartPanel:SetSize(w, h)
-		self.StartPanel:SetTitle("Welcome!")
-		self.StartPanel:SetVisible(false)
-		self.StartPanel:SetDraggable(true)
-		self.StartPanel:ShowCloseButton(false)
-		self.StartPanel:SetDeleteOnClose(false)
-		self.StartPanel:SetScreenLock(true)
-		self.StartPanel:MakePopup()
-		
-		self.OpenButton = vgui.Create("DButton", self.StartPanel)
-		self.OpenButton:SetSize(150 / 2 - 4, 20)
-		self.OpenButton:SetPos(2, 25)
-		self.OpenButton:SetText("Open MOTD")
-		self.OpenButton.DoClick = function()
-			PLUGIN.MotdPanel:SetVisible(true)
-			PLUGIN.StartPanel:SetVisible(false) 
-		end
-		
-		self.CloseButton = vgui.Create("DButton",self.StartPanel)
-		self.CloseButton:SetSize(150 / 2 - 6, 20)
-		self.CloseButton:SetPos(150 / 2 + 4, 25)
-		self.CloseButton:SetText("Close")
-		self.CloseButton.DoClick = function() 
-			PLUGIN.StartPanel:SetVisible(false) 
-		end
 		
 		self.MotdPanel = vgui.Create("DFrame")
 		local w,h = ScrW() - 200,ScrH() - 200
@@ -85,14 +57,8 @@ if (CLIENT) then
 	
 	concommand.Add("evolve_motd", function(ply,cmd,args)
 		if file.Exists("evolvemotd.txt", "DATA") then
+			if not PLUGIN.MotdPanel then PLUGIN:CreateMenu() end
 			PLUGIN.MotdPanel:SetVisible(true)
-		end
-	end)
-	
-	concommand.Add("evolve_startmotd", function(ply,cmd,args)
-		if file.Exists("evolvemotd.txt", "DATA") then
-			if not PLUGIN.StartPanel then PLUGIN:CreateMenu() end
-			PLUGIN.StartPanel:SetVisible(true)
 		end
 	end)
 	
